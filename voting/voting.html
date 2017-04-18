@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <script src="node_modules/react/dist/react.js"></script>
+    <script src="node_modules/react-dom/dist/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.js"></script>
+</head>
+  <body>
+
+    <div id="app"></div>
+    <script type="text/babel">
+// APP code
+    const App = (props) => {
+        return (
+          <div>
+            <header>
+                <h1>Vote Your JS Library!</h1>
+            </header>
+            <VoteTileList />
+          </div>
+        )
+    }
+
+// VOTE tile code
+    const VoteTile = (props) => {
+    const handleClick = () => {
+        props.onClick(props.libraryName)
+    }
+    return (
+        <div className="vote-tile">
+            <p className="vote-count">{props.votes}</p>
+            <p className="library-name">{props.libraryName}</p>
+            <span className="vote-button" onClick={handleClick}>+</span>
+        </div>
+    )
+}
+
+ReactDOM.render(VoteTile, document.getElementById("app"));
+
+VoteTile.propTypes = {
+    votes: PropTypes.number.isRequired,
+    libraryName: PropTypes.string.isRequired,
+}
+
+
+// VOTE TILE LIST code
+
+class VoteTileList extends Component {
+    state = {
+        libraries: [
+            { votes: 12, libName: 'Vue' },
+            { votes: 15, libName: 'React' },
+            { votes: 4, libName: 'Ember' },
+            { votes: 9, libName: 'Angular' },
+        ]
+    }
+    incrementVote = (library) => {
+        const newLibraries = this.state.libraries.map((libObj, index) => {
+            if ( libObj.libName === library ) {
+                return {
+                    ...libObj,
+                    votes: libObj.votes + 1
+                }
+            }
+            return libObj;
+        });
+        this.setState({
+            libraries: newLibraries
+        });
+    }
+    sortedVoteObjs(){
+        return [ ...this.state.libraries ]
+                .sort((obj1, obj2) => {
+                    const diff = obj2.votes - obj1.votes;
+                    return diff
+                })
+    }
+    render(){
+        const voteTiles = this.sortedVoteObjs()
+                    .map((libObj) => {
+                        return <VoteTile
+                                    key={libObj.libName}
+                                    votes={libObj.votes}
+                                    libraryName={libObj.libName}
+                                    onClick={ this.incrementVote }/>
+                    });
+
+        return (
+            <div className="vote-tile-list">
+               {voteTiles}
+            </div>
+        )
+    }
+}
+ReactDOM.render(<App />,document.getElementById('app'));
+
+</script>
+
+<style>
+* {
+  font-family: monospace;
+}
+
+.vote-count {
+  border: 1px solid black;
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.vote-count, .library-name {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+.vote-tile {
+  border: 1px solid black;
+  width: 75%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.vote-button {
+  color: green;
+}
+</style>
+  </body>
+</html>

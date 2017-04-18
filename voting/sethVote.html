@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link href="css/style.css" rel="stylesheet">-->
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script src='node_modules/react/dist/react.js'></script>
+<script src='node_modules/react-dom/dist/react-dom.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.js"></script>
+<script type="text/babel">
+
+    const languageArray = [
+        { id: 1, votes: 0, name: "React" },
+        { id: 2, votes: 0, name: "Vue" },
+        { id: 3, votes: 0, name: "Angular" },
+        { id: 4, votes: 0, name: "Ember" }
+    ];
+
+
+
+    function HeaderText(props){
+        return <h1>{props.text}</h1>
+    }
+
+    class Tiles extends React.Component {
+        constructor(props){
+            super(props)
+            this.state = {libraries: props.libraries}
+            this.upVote = this.upVote.bind(this)
+        }
+        upVote(libraryId){
+            //find the right library
+            const newLibraries = this.state.libraries.map((library) => {
+                if(library.id === libraryId){
+                    // return true;
+                    library.votes += 1;
+                }
+                console.log(library);
+                console.log(library.id);
+                let sortedArray = library
+                sortedArray.sort(function(,b){return b-a});
+                // return sortedArray
+                return library
+            })
+            this.setState({libraries: newLibraries})
+            //increment that votes by one
+        }
+
+        render(){
+            const myList = this.state.libraries.map((libObj) => {
+                return <Tile key={libObj.id} {...libObj} upVote={this.upVote}/>
+            });
+            return (
+                <table>
+                    <tbody>
+                    {myList}
+                    </tbody>
+                </table>
+            );
+        }
+    }
+
+    function Tile(props){
+        return (
+            <tr key={props.id}>
+                <td>{props.votes} votes for</td>
+                <td>{props.name}</td>
+                <td><button onClick={() => props.upVote(props.id)}>+</button></td>
+            </tr>
+        )
+    }
+
+    function App(props){
+        return (
+            <div>
+                <HeaderText text="React!" />
+                <Tiles libraries= {props.votingLibraries} />
+            </div>
+        )
+    }
+    ReactDOM.render(<App votingLibraries={languageArray} />, document.getElementById("app"));
+
+    </script>
+
+</html>
